@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Study Schedule</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Study Schedule App</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/schedule">My Schedule</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-5">
+        <h1 class="text-center">Create Your Study Schedule</h1>
+        <% if (error) { %>
+            <div class="alert alert-danger mt-3"><%= error %></div>
+        <% } %>
+        
+        <form action="/schedule" method="POST" class="mt-4">
+            <div class="mb-3">
+                <label for="days" class="form-label">Number of Days to Test</label>
+                <input type="number" class="form-control" id="days" name="days" required />
+                <label for="hours" class="form-label">Daily Study Hours</label>
+                <input type="number" class="form-control" id="hours" name="hours" required />
+            </div>
+            <div id="module-list">
+                <h3>Modules</h3>
+                <div class="mb-3 module">
+                    <label for="module-name" class="form-label">Module Name</label>
+                    <input type="text" class="form-control" name="modules[0][name]" required />
+                    <label for="module-difficulty" class="form-label mt-2">Difficulty Level (1-10)</label>
+                    <input type="number" class="form-control" name="modules[0][difficulty]" required />
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" id="add-module">Add Module</button>
+            <button type="submit" class="btn btn-primary mt-3">Create Schedule</button>
+        </form>
+    </div>
+
+    <div class="container mt-5">
+        <h1>Your Study Schedules</h1>
+
+        <% if (schedule) { i = 0; %>
+            <% schedule.forEach(seach => { i = i+1 %>
+                <h3>Schedule <%= i %></h3>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Total Days</th>
+                            <th>Daily Study Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><%= seach.days %></td>
+                            <td><%= seach.dailyStudyHours %></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Modules</h4>
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th>Module Name</th>
+                            <th>Days Allocated</th>
+                            <th>Daily Study Hours</th>
+                            <th>Total Hours</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% seach.modules.forEach(module => { %>
+                            <tr>
+                                <td><%= module.module %></td>
+                                <td><%= module.days %></td>
+                                <td><%= module.dailyHours %></td>
+                                <td><%= module.totalHours %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% }) %>
+        <% } else { %>
+            <p>No schedule found for this user.</p>
+        <% } %>
+    </div>
+
+    <script>
+        let moduleIndex = 1;
+        document.getElementById('add-module').addEventListener('click', () => {
+            const moduleList = document.getElementById('module-list');
+            const moduleDiv = document.createElement('div');
+            moduleDiv.className = 'mb-3 module';
+            moduleDiv.innerHTML = `
+                <label for="module-name" class="form-label">Module Name</label>
+                <input type="text" class="form-control" name="modules[${moduleIndex}][name]" required />
+                <label for="module-difficulty" class="form-label mt-2">Difficulty Level (1-10)</label>
+                <input type="number" class="form-control" name="modules[${moduleIndex}][difficulty]" required />
+            `;
+            moduleList.appendChild(moduleDiv);
+            moduleIndex++;
+        });
+    </script>
+</body>
+</html>
